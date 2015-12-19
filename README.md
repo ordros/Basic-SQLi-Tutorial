@@ -1,5 +1,5 @@
 # Flask-Login-App-Tutorial
-Tutorial for how to make a simple Flask login app, with a XML database
+Tutorial for how to make a simple Flask login app, with a SQLite3 database
 ***
 Hello, today I am going to teach you how to setup a Flask login page. 
 
@@ -36,9 +36,9 @@ I found this video to be useful in the setup:
 [![Flask Setup](https://i.ytimg.com/vi_webp/98JY6MvumVs/mqdefault.webp)](http://www.youtube.com/watch?v=98JY6MvumVs)
 ***
 Now to create the login page. In order to do so, let's go back into __init__.py.
-We need to add a route for login, so below your index function, add the following code: 
+We need to add a route for login, so replace your index function with the following code: 
 ```python
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('/', methods=['GET', 'POST'])
 def login():
     error = None
     if request.method == 'POST':
@@ -76,8 +76,8 @@ It's contents will be:
   </body>
 </html>
 ```
-Visit http://127.0.0.1:5000/login to verify that this works.
-We also need to have a location that this page goes to, so let's add a secret route too!
+Visit http://127.0.0.1:5000/login to verify that this works. Right now, the username and password is set to admin.
+However, we don't have a destination yet, so let's add a secret route too!
 ```python  
 @app.route('/secret')
 def secret():
@@ -88,50 +88,58 @@ def secret():
   from flask import Flask, render_template, redirect, url_for, request
 ```
 ***
-Now that you have seen a basic login system, let's setup a database. We will be using a simple XML database.
-Create a file called user.xml
-In that file add the following: 
-
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<user>
-  <name>ihoegen</name>
-  <pass>Hunter12</pass>
-</user>
-<user>
-  <name>leet1337</name>
-  <pass>python</pass>
-</user>
+Now that you have seen a basic login system, let's setup a database. We will be using a SQLite3 database.
+Open command prompt in your static directory and enter the following commands:
+```cmd
+$ sqlite3
+$ User.db
+$ CREATE TABLE USERS(USERNAME TEXT PRIMARY KEY NOT NULL, PASSWORD TEXT NOT NULL);
+$ INSERT INTO USERS (USERNAME, PASSWORD)
+$ VALUES ('your_username', 'your_password')
 ```
-You can use your own passwords, or add as many as you would like. Put this file in the same directory as __init__.py.
+What this does is create a database named User.db, and creates a Table of users in that database. It then creates a user, with a username and password of your choosing.
+You can use your own passwords, or add as many as you would like.
 
-Now we need to update our file to process XML.
-At the top, add an import for the python XML library
+Now we need to update our file to process SQL.
+At the top, add an import for the python SQLite3 module.
 
 ```python
-import xml.etree.ElementTree as etree
+import sqlite3
 ```
 Also, you're going to have to rework your login method. It will now look like: 
 ```python
-@app.route('/login', methods=['GET', 'POST'])
 def login():
     error = None
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        completion = False 
-        for user in root.findall('user'):
-            dbuser = user.find('name').text
-            dbpass = user.find('pass').text
-            if dbuser == username and dbpass==password:
-                completion = True
+        completion = validate(username, password)
         if completion ==False:
             error = 'Invalid Credentials. Please try again.'
         else:
             return redirect(url_for('secret'))
     return render_template('login.html', error=error)
 ```
-It uses a for loop to process the XML and compare the username and passwords.
+You are also going to need a method called validate to compare the values. 
+```
+def validate(username, password):
+    con = sqlite3.connect('static/user.db')
+    completion = False
+    with con:
+                cur = con.cursor()
+                cur.execute("SELECT * FROM Users")
+                rows = cur.fetchall()
+                for row in rows:
+                    dbUser = row[0]
+                    dbPass = row[1]
+                    if dbUser==username:
+                        if dbPass==password:
+                            completion = True
+                        else:
+                            completion = False
+    return completion
+```
+It takes the inputed username and passwords as arguments, and compare them against the users table.
 ***
 Your file structure will look like
 ```
@@ -139,7 +147,7 @@ Your file structure will look like
 --Main Folder
     --__init__.py
     --Static
-        --user.xml
+        --user.db
     --Templates
         --login.html
 ```
