@@ -1,5 +1,6 @@
 # Flask-Login-App-Tutorial
 Tutorial for how to make a simple Flask login app, with a SQLite3 database
+All files are included
 ***
 Hello, today I am going to teach you how to setup a Flask login page. 
 
