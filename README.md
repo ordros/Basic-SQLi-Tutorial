@@ -132,8 +132,10 @@ def login():
     return render_template('login.html', error=error)
 ```
 It uses a for loop to process the XML and compare the username and passwords.
-```
+***
 Your file structure will look like
+```
+
 --Main Folder
     --__init__.py
     --Static
