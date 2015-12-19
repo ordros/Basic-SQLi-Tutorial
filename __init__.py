@@ -1,27 +1,32 @@
-from flask import Flask, render_template, redirect, url_for, request
-
-import xml.etree.ElementTree as ET
-tree = ET.parse('static/user.xml')
-root = tree.getroot()
-
+from flask import Flask, render_template, redirect, url_for, request, g
+import sqlite3
 app = Flask(__name__)
 
-@app.route('/')
-def home():
-    return "Hello, World!" 
+def validate(username, password):
+    con = sqlite3.connect('static/user.db')
+    completion = False
+    with con:
+                cur = con.cursor()
+                cur.execute("SELECT * FROM Users")
+                rows = cur.fetchall()
+                for row in rows:
+                    dbUser = row[0]
+                    dbPass = row[1]
+                    if dbUser==username:
+                        if dbPass==password:
+                            completion = True
+                        else:
+                            completion = False
+    return completion
 
-@app.route('/login', methods=['GET', 'POST'])
+
+@app.route('/', methods=['GET', 'POST'])
 def login():
     error = None
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        completion = False 
-        for user in root.findall('user'):
-            dbuser = user.find('name').text
-            dbpass = user.find('pass').text
-            if dbuser == username and dbpass==password:
-                completion = True
+        completion = validate(username, password)
         if completion ==False:
             error = 'Invalid Credentials. Please try again.'
         else:
