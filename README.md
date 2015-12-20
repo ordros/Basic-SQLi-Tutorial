@@ -98,6 +98,8 @@ $ CREATE TABLE USERS(USERNAME TEXT PRIMARY KEY NOT NULL, PASSWORD TEXT NOT NULL)
 $ INSERT INTO USERS (USERNAME, PASSWORD)
 $ VALUES ('your_username', 'your_password')
 ```
+I used MD5 to store my passwords, and you should too. 
+You can then use the module `hashlib to convert the user input password to this password, and increase your security.
 What this does is create a database named User.db, and creates a Table of users in that database. It then creates a user, with a username and password of your choosing.
 You can use your own passwords, or add as many as you would like.
 
@@ -107,6 +109,8 @@ At the top, add an import for the python SQLite3 module.
 ```python
 import sqlite3
 ```
+```import hashlib``` If you want to use MD5 as well.
+
 Also, you're going to have to rework your login method. It will now look like: 
 ```python
 def login():
@@ -122,7 +126,7 @@ def login():
     return render_template('login.html', error=error)
 ```
 You are also going to need a method called validate to compare the values. 
-```
+```python
 def validate(username, password):
     con = sqlite3.connect('static/user.db')
     completion = False
@@ -134,13 +138,18 @@ def validate(username, password):
                     dbUser = row[0]
                     dbPass = row[1]
                     if dbUser==username:
-                        if dbPass==password:
-                            completion = True
-                        else:
-                            completion = False
+                        completion=check_password(dbPass, password)
     return completion
+
 ```
 It takes the inputed username and passwords as arguments, and compare them against the users table.
+
+If you have your passwords stored as MD5, you'll have to convert the user input password as MD5. To do that, I created a method called check_password.
+```python
+def check_password(hashed_password, user_password):
+    return hashed_password == hashlib.md5(user_password.encode()).hexdigest()
+
+```
 ***
 Your file structure will look like
 ```
