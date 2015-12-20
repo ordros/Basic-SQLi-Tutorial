@@ -1,6 +1,11 @@
 from flask import Flask, render_template, redirect, url_for, request, g
 import sqlite3
+import hashlib
+
 app = Flask(__name__)
+
+def check_password(hashed_password, user_password):
+    return hashed_password == hashlib.md5(user_password.encode()).hexdigest()
 
 def validate(username, password):
     con = sqlite3.connect('static/user.db')
@@ -13,10 +18,7 @@ def validate(username, password):
                     dbUser = row[0]
                     dbPass = row[1]
                     if dbUser==username:
-                        if dbPass==password:
-                            completion = True
-                        else:
-                            completion = False
+                        completion=check_password(dbPass, password)
     return completion
 
 
