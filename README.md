@@ -145,6 +145,8 @@ def validate(username, password):
 It takes the inputed username and passwords as arguments, and compare them against the users table.
 
 If you have your passwords stored as MD5, you'll have to convert the user input password as MD5. To do that, I created a method called check_password.
+
+One of the username as password sets in the user.db database is Username: leet1337 Password: python
 ```python
 def check_password(hashed_password, user_password):
     return hashed_password == hashlib.md5(user_password.encode()).hexdigest()
