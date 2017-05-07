@@ -44,10 +44,11 @@ def login():
 
 @app.route('/secret')
 def secret():
-    content = "Your query result is"
+    content = "<b>Flag is not here. <br>Another table contain flag.</b><br>"
+    content += "Your query result is"
     content += "<br>"
     content += sql_content
     return content
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)
