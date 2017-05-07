@@ -4,23 +4,30 @@ import hashlib
 
 app = Flask(__name__)
 
+sql_content = ""
+
 def check_password(hashed_password, user_password):
+    return hashed_password == user_password
     return hashed_password == hashlib.md5(user_password.encode()).hexdigest()
 
 def validate(username, password):
     con = sqlite3.connect('static/user.db')
     completion = False
     with con:
-                cur = con.cursor()
-                cur.execute("SELECT * FROM Users")
-                rows = cur.fetchall()
-                for row in rows:
-                    dbUser = row[0]
-                    dbPass = row[1]
-                    if dbUser==username:
-                        completion=check_password(dbPass, password)
-    return completion
-
+        cur = con.cursor()
+        sql = "SELECT * FROM users WHERE username = \"" + username + "\" AND password = \"" + password + "\""
+        print sql
+        cur.execute(sql)
+        rows = cur.fetchall()
+        content = ""
+        for row in rows:
+            content += str(row)
+        print content
+        sql_content = content
+        global sql_content
+        if rows != []:
+            return True
+    return False
 
 @app.route('/', methods=['GET', 'POST'])
 def login():
@@ -37,7 +44,10 @@ def login():
 
 @app.route('/secret')
 def secret():
-    return "You have successfully logged in"
+    content = "Your query result is"
+    content += "<br>"
+    content += sql_content
+    return content
 
 if __name__ == '__main__':
     app.run(debug=True)
