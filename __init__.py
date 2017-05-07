@@ -20,9 +20,9 @@ def validate(username, password):
         print "[sql]:" + sql
         cur.execute(sql)
         rows = cur.fetchall()
+        if rows != []:
             return True
     return False
-    if rows != []:
 
 @app.route('/', methods=['GET', 'POST'])
 def login():
