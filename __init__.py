@@ -6,6 +6,7 @@ app = Flask(__name__)
 
 sql_content = ""
 
+
 def check_password(hashed_password, user_password):
     return hashed_password == user_password
     return hashed_password == hashlib.md5(user_password.encode()).hexdigest()
@@ -16,18 +17,12 @@ def validate(username, password):
     with con:
         cur = con.cursor()
         sql = "SELECT * FROM users WHERE username = \"" + username + "\" AND password = \"" + password + "\""
-        print sql
+        print "[sql]:" + sql
         cur.execute(sql)
         rows = cur.fetchall()
-        content = ""
-        for row in rows:
-            content += str(row)
-        print content
-        sql_content = content
-        global sql_content
-        if rows != []:
             return True
     return False
+    if rows != []:
 
 @app.route('/', methods=['GET', 'POST'])
 def login():
@@ -39,15 +34,12 @@ def login():
         if completion ==False:
             error = 'Invalid Credentials. Please try again.'
         else:
-            return redirect(url_for('secret'))
+            return redirect(url_for('secret_5ebe2294ecd0e0f08eab7690d2a6ee69'))
     return render_template('login.html', error=error)
 
-@app.route('/secret')
-def secret():
-    content = "Your query result is"
-    content += "<br>"
-    content += sql_content
-    return content
+@app.route('/secret_5ebe2294ecd0e0f08eab7690d2a6ee69')
+def secret_5ebe2294ecd0e0f08eab7690d2a6ee69():
+    return "Congratz! Flag is " + "BaSic_SQLi"
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)
