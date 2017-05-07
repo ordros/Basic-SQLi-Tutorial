@@ -16,7 +16,7 @@ def validate(username, password):
     with con:
         cur = con.cursor()
         sql = "SELECT * FROM users WHERE username = \"" + username + "\" AND password = \"" + password + "\""
-        print sql
+        print "[sql]: " + sql
         cur.execute(sql)
         rows = cur.fetchall()
         content = ""
