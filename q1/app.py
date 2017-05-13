@@ -40,4 +40,4 @@ def login():
 def secret_5ebe2294ecd0e0f08eab7690d2a6ee69():
     return "Congratz! Flag is " + "BaSic_SQLi"
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", debug=False)
+    app.run(host="0.0.0.0", port=8000, threaded=True, debug=False)
