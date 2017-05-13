@@ -6,7 +6,6 @@ app = Flask(__name__)
 
 sql_content = ""
 
-
 def check_password(hashed_password, user_password):
     return hashed_password == user_password
     return hashed_password == hashlib.md5(user_password.encode()).hexdigest()
@@ -40,6 +39,5 @@ def login():
 @app.route('/secret_5ebe2294ecd0e0f08eab7690d2a6ee69')
 def secret_5ebe2294ecd0e0f08eab7690d2a6ee69():
     return "Congratz! Flag is " + "BaSic_SQLi"
-
 if __name__ == '__main__':
-    app.run(debug=False)
+    app.run(host="0.0.0.0", debug=False)
